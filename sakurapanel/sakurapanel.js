@@ -958,6 +958,7 @@
 			}
 			
 			this.hashControlInterval = setInterval(this.realizeHash.bind(this), 250);
+			setTimeout(this.realizeHash.bind(this), 0);
 			
 			if (reload && !!this.category && !!this.page) {
 				this._lastHash = '';
@@ -1132,6 +1133,7 @@
 					this.self  = opt.self;
 					this.data  = {};
 					this.timer = {};
+					this.id    = new Date().getTime();
 					
 					// init
 					this.init();

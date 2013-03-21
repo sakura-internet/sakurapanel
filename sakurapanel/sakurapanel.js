@@ -440,6 +440,14 @@
 		 *  Requester#enqueue(queue) -> sakura.api.Requester
 		**/
 		enqueue: function _enqueue(queue) {
+			
+			return this.push(queue);
+		}
+		,
+		/**
+		 *  Requester#push(queue) -> sakura.api.Requester
+		**/
+		push: function _push(queue) {
 			queue.stat = 'waiting';
 			
 			this.queues.push(queue);
@@ -447,6 +455,39 @@
 			this.onEnqueue();
 			
 			document.fire('sakurapanel:api:requester:enqueue', this);
+			document.fire('sakurapanel:api:requester:push', this);
+			
+			return queue;
+		}
+		,
+		/**
+		 *  Requester#unshift(queue) -> sakura.api.Requester
+		**/
+		unshift: function _unshift(queue) {
+			queue.stat = 'waiting';
+			
+			this.queues.unshift(queue);
+			
+			this.onEnqueue();
+			
+			document.fire('sakurapanel:api:requester:enqueue', this);
+			document.fire('sakurapanel:api:requester:unshift', this);
+			
+			return queue;
+		}
+		,
+		/**
+		 *  Requester#insert(pos, queue) -> sakura.api.Requester
+		**/
+		insert: function _insert(pos, queue) {
+			queue.stat = 'waiting';
+			
+			this.queues.splice(pos, 0, queue);
+			
+			this.onEnqueue();
+			
+			document.fire('sakurapanel:api:requester:enqueue', this);
+			document.fire('sakurapanel:api:requester:unshift', this);
 			
 			return queue;
 		}
@@ -1093,6 +1134,7 @@
 				if (this.p.timer && Object.keys(this.p.timer).length >= 0) {
 					for (var i in this.p.timer) {
 						try {
+							console.debug('clearing timer', i, this.p.timer[i]);
 							clearTimeout(this.p.timer[i]);
 							clearInterval(this.p.timer[i]);
 						} catch (e) {
@@ -1995,6 +2037,14 @@
 			return this;
 		}
 	});//<--ui.Dropdown
+	
+	//
+	// ui.ContextMenu
+	//
+	ui.ContextMenu = Class.create(ui.Element, {
+		
+		//
+	});//<--ui.ContextMenu
 	
 	//
 	// ui.Headbar

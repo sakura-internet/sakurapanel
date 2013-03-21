@@ -487,7 +487,7 @@
 			this.onEnqueue();
 			
 			document.fire('sakurapanel:api:requester:enqueue', this);
-			document.fire('sakurapanel:api:requester:unshift', this);
+			document.fire('sakurapanel:api:requester:insert', this);
 			
 			return queue;
 		}

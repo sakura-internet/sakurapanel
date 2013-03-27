@@ -765,7 +765,7 @@
 			
 			// querystring
 			if (isDisableCache || optionalRequestParameter !== null) {
-				var qss = url.match(/\?[^#]+/);
+				var qss = url.match(/\?([^#]+)/);
 				var q   = {};
 				
 				if (qss !== null) {

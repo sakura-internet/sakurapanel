@@ -760,6 +760,31 @@
 			var onSuccess  = opt.onSuccess  || function(){};
 			var onFailure  = opt.onFailure  || function(){};
 			
+			var isDisableCache           = opt.isDisableCache           || false;
+			var optionalRequestParameter = opt.optionalRequestParameter || null;
+			
+			// querystring
+			if (isDisableCache || optionalRequestParameter !== null) {
+				var qss = url.match(/\?[^#]+/);
+				var q   = {};
+				
+				if (qss !== null) {
+					q = qss[1].toQueryParams();
+				}
+				
+				if (isDisableCache) {
+					q._nonce = new Date().getTime();
+				}
+				
+				if (optionalRequestParameter !== null) {
+					Object.extend(q, optionalRequestParameter);
+				}
+				
+				var qs = Object.toQueryString(q);
+				
+				url = url.replace(/(\?[^#]*)?(#.+)?$/, '?' + qs + '$2');
+			}
+			
 			if ((ext === 'js') && (!callback)) {
 			
 				var sc    = new Element('script', {
@@ -880,13 +905,21 @@
 	util.Requires = Class.create({
 		
 		/**
-		 *  new sakura.util.Requires(requires, onComplete) -> sakura.util.Requires
-		 *  - requires   (Array) - array of resource required.
-		 *  - onComplete (Function) - optional callback function.
+		 *  new sakura.util.Requires(requires, option) -> sakura.util.Requires
+		 *  - requires (Array) - array of resource required.
+		 *  - option   (Object | Function) - optional parameter or callback function.
 		**/
-		initialize: function(requires, onComplete) {
+		initialize: function(requires, option) {
 			this.requires   = requires || [];
-			this.onComplete = onComplete || null;
+			this.onComplete = null;
+			
+			if (Object.isFunction(option) === true) {
+				this.onComplete = option || null;
+			} else if (typeof option === 'object') {
+				this.onComplete               = option.onComplete || null;
+				this.isDisableCache           = option.isDisableCache || false;
+				this.optionalRequestParameter = option.optionalRequestParameter || null;
+			}
 			
 			this.load();
 			
@@ -901,8 +934,10 @@
 			}
 			
 			new sakura.util.Loader({
-				url       : this.requires.shift(),
-				onComplete: this.load.bind(this)
+				url                     : this.requires.shift(),
+				onComplete              : this.load.bind(this),
+				isDisableCache          : this.isDisableCache,
+				optionalRequestParameter: this.optionalRequestParameter
 			});
 			
 			return this;

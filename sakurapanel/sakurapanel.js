@@ -2145,14 +2145,21 @@
 				this.entity.style.top  = posY + 'px';
 				
 				var remover = function() {
+					clearTimeout(timerMouseObservingDelay);
+					$(document.body).stopObserving('mouseup', remover);
 					$(document.body).stopObserving('click', remover);
 					$(document.body).stopObserving('contextmenu', remover);
 					$(document.body).stopObserving('sakura:contextmenu', remover);
 					
-					container.remove();
-					container = null;
+					setTimeout(function() {
+						container.remove();
+						container = null;
+					}, 10);
 				};
 				
+				var timerMouseObservingDelay = setTimeout(function() {
+					$(document.body).observe('mouseup', remover);
+				}, 100);
 				$(document.body).observe('click', remover);
 				$(document.body).observe('contextmenu', remover);
 				$(document.body).observe('sakura:contextmenu', remover);

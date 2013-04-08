@@ -2099,6 +2099,7 @@
 			
 			this.target.observe('contextmenu', function(e) {
 				
+				this.target.fire('sakura:contextmenu');
 				e.stop();
 				
 				var container = new Element('div');
@@ -2144,13 +2145,24 @@
 				this.entity.style.top  = posY + 'px';
 				
 				var remover = function() {
+					clearTimeout(timerMouseObservingDelay);
 					$(document.body).stopObserving('mouseup', remover);
+					$(document.body).stopObserving('click', remover);
+					$(document.body).stopObserving('contextmenu', remover);
+					$(document.body).stopObserving('sakura:contextmenu', remover);
 					
-					container.remove();
-					container = null;
+					setTimeout(function() {
+						container.remove();
+						container = null;
+					}, 10);
 				};
 				
-				$(document.body).observe('mouseup', remover);
+				var timerMouseObservingDelay = setTimeout(function() {
+					$(document.body).observe('mouseup', remover);
+				}, 100);
+				$(document.body).observe('click', remover);
+				$(document.body).observe('contextmenu', remover);
+				$(document.body).observe('sakura:contextmenu', remover);
 			}.bind(this));
 			
 			this.target.observe('sakura:remove', function(e) {

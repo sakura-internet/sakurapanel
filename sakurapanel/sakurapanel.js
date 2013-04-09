@@ -2152,7 +2152,7 @@
 					$(document.body).stopObserving('sakura:contextmenu', remover);
 					
 					setTimeout(function() {
-						container.remove();
+						try { container.remove(); } catch (e) {}
 						container = null;
 					}, 10);
 				};
@@ -2166,6 +2166,11 @@
 			}.bind(this));
 			
 			this.target.observe('sakura:remove', function(e) {
+				
+				this.remove();
+			}.bind(this));
+			
+			this.target.observe('remove', function(e) {
 				
 				this.remove();
 			}.bind(this));
